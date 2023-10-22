@@ -1,0 +1,56 @@
+version: "3.9"
+services:
+
+    # PHP service
+    comments-php:
+        build: ./php
+        container_name: comments-php
+        working_dir: /var/www
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        ports:
+            - 8022:80
+        volumes:
+            - ~/.ssh:/root/.ssh
+            - ../:/var/www
+            - ./php/php.ini:/usr/local/etc/php/php.ini
+        networks:
+            - comments-network
+
+    # MySQL database service
+    comments-db:
+        image: mysql:8
+        container_name: comments-db
+        ports:
+            - "33061:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_DATABASE: ${DB_DATABASE}
+        volumes:
+            - ./mysql/data:/var/lib/mysql
+        env_file:
+            - ./.env
+        networks:
+            - comments-network
+
+    # Nginx service
+    comments-nginx:
+        image: nginx:alpine
+        container_name: comments-nginx
+        ports:
+            - 8021:80
+        volumes:
+            - ../:/var/www
+            - ./nginx/:/etc/nginx/conf.d/
+        networks:
+            - comments-network
+        links:
+            - comments-php
+        depends_on:
+            - comments-php
+
+networks:
+    comments-network:
+        driver: bridge
