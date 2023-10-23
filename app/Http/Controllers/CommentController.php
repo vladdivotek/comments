@@ -9,7 +9,20 @@ class CommentController extends Controller
 {
     public function index()
     {
-        $comments = Comment::all();
+        $comments = Comment::where('comment_id', null)->paginate(25);
         return view('index', ['comments' => $comments]);
+    }
+
+    public function store(Request $request)
+    {
+        $comment = Comment::create([
+            'comment_id' => $request->comment_id,
+            'name' => $request->name,
+            'email' => $request->email,
+            'link' => $request->link ?? '',
+            'text' => $request->text
+        ]);
+
+        return response()->json(['comment' => $comment]);
     }
 }

@@ -11,13 +11,18 @@ class Comment extends Model
 
     protected $fillable = ['comment_id', 'name', 'email', 'link', 'text'];
 
-    public function comment()
+    public function comments()
     {
         return $this->hasMany(Comment::class);
     }
 
-    public function comments()
+    public function subComments()
     {
-        return $this->belongsTo(Comment::class);
+        return $this->hasMany(Comment::class)->with('comments');
+    }
+
+    public function parentComment()
+    {
+        return $this->belongsTo(Comment::class, 'comment_id');
     }
 }
