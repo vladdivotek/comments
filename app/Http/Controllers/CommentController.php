@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $comments = Comment::where('comment_id', null)->paginate(25);
         return view('index', ['comments' => $comments]);

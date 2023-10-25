@@ -1,3 +1,14 @@
+document.querySelectorAll('.comment-answer').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            document.querySelectorAll('.comment-answer').forEach(otherCheckbox => {
+                if (otherCheckbox !== this) {
+                    otherCheckbox.checked = false;
+                }
+            });
+        }
+    });
+});
 
 document.querySelector('#send-comment').addEventListener('click', function () {
     let submit = this;
